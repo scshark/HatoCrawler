@@ -61,6 +61,8 @@ func CreateWallStreetLivesData(lives []WallStreetLivesItems,next int64)error{
 		if err != nil {
 			logrus.Errorf("华尔街见闻数据保存失败 %s",err)
 		}
+		logrus.Infof("华尔街见闻数据保存成功 %d 条",len(mData))
+
 		return err
 	}
 

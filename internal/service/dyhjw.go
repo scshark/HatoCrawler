@@ -8,6 +8,7 @@ package service
 
 import (
 	"SecCrawler/internal/model"
+	"github.com/sirupsen/logrus"
 )
 
 type DyhjwLivesItems struct {
@@ -37,6 +38,10 @@ func CreateDyhjwLivesData(lives []DyhjwLivesItems)error {
 	}
 	if len(mData) > 0{
 		_, err := ds.CreateDyhjwLives(&model.Dyhjw{}, mData)
+
+		if err == nil {
+			logrus.Infof("第一黄金网 数据保存成功 共 %d 条",len(mData))
+		}
 		return err
 	}
 

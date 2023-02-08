@@ -68,6 +68,7 @@ func CreateJinseLiveData(l JinseLiveList) error {
 		}
 	}
 
+	logrus.Infof("金色财经更新数据 %d条",len(mData))
 	// 保存数据
 	_, err := ds.CreateMessage(
 		&model.Jinse{},

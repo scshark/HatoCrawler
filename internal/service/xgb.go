@@ -55,6 +55,8 @@ func CreateXgbLivesData(lives []XgbLivesItems) error {
 		if err != nil {
 			logrus.Errorf("XGB数据保存失败 : %s", err)
 		}
+		logrus.Infof("选股宝 保存数据成功 %d 条",len(mData))
+
 		return err
 	}
 	return nil

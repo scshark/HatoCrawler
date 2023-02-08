@@ -37,7 +37,9 @@ func (crawler Jinse) Get() error {
 	// 加载数据
 	// 初始化信息
 	err := crawler.getLiveData(jinseInit)
-
+	if err == nil {
+		logrus.Infof("金色财经初始化采集成功")
+	}
 	// 开启定时刷新数据
 	err = jinseCronCrawler()
 	return err
@@ -52,6 +54,7 @@ func jinseCronCrawler() error {
 		logrus.Error("金色财经定时器错误%s", err.Error())
 	}
 	_cron.Start()
+	logrus.Infof("金色财经定时采集已开启 @every 1m runRefresh @every 10m runHistory")
 	return err
 }
 
@@ -116,10 +119,13 @@ func (crawler Jinse) getLiveData(getType uint) error {
 
 	switch getType {
 	case jinseInit:
+		logrus.Infof("%s 开始初始化采集",crawler.Config().Description)
 		topId = "0"
 	case jinseGetNew:
+		logrus.Infof("%s 开始新数据采集",crawler.Config().Description)
 		topId = "0"
 	case jinseGetIntervals:
+		logrus.Infof("%s 开始区间数据采集",crawler.Config().Description)
 		indexId := service.GetLivesCursor(config.JinseLivesCrawler, 0)
 		topId = strconv.FormatInt(indexId, 10)
 	}
@@ -134,12 +140,14 @@ func (crawler Jinse) getLiveData(getType uint) error {
 	}
 
 	// 解析数据
+	logrus.Infof("%s 开始数据解析",crawler.Config().Description)
 	list, err := crawler.respParse(respData)
 	if err != nil {
 		logrus.Errorf("金色财经解析数据失败 respData %s, error : %s", respData, err)
 		return err
 	}
 
+	logrus.Infof("金色财经获取数据 %d 条，开始进行数据保存",len(list.LiveData))
 	// 保存列表
 	err = service.CreateJinseLiveData(list)
 	if err != nil {
@@ -149,11 +157,14 @@ func (crawler Jinse) getLiveData(getType uint) error {
 
 	switch getType {
 	case wsGetInit:
+		logrus.Infof("%s 开始初始化游标 %d",crawler.Config().Description,list.BottomId)
+
 		err = service.InitLivesIntervals(list.BottomId, config.JinseLivesCrawler, 0)
 		if err != nil {
 			logrus.Fatalf("金色财经初始化游标失败 %s", err)
 		}
 	case wsGetIntervals:
+		logrus.Infof("%s 开始更新游标 %d",crawler.Config().Description,list.BottomId)
 		err = service.UpdateLivesCursor(config.JinseLivesCrawler, list.BottomId, 0)
 		if err != nil {
 			logrus.Fatalf("金色财经更新游标失败 %s", err)

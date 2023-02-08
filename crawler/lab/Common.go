@@ -9,11 +9,13 @@ package lab
 import (
 	"SecCrawler/utils"
 	"bytes"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func GetUrlData(url string, getType string) (string, error) {
 
+	logrus.Infof("采集地址数据获取 %s,采集类型%s",url,getType)
 	client := utils.CrawlerClient()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {

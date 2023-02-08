@@ -40,15 +40,19 @@ func (crawler Xgb) Config() register.CrawlerConfig {
 
 func (crawler Xgb) Get() error {
 
+	logrus.Infof("%s 开始初始化",crawler.Config().Description)
 	err := crawler.initXgbLives()
 	if err != nil {
 		logrus.Fatalf(" 选股宝初始化错误 err : %s", err)
 	}
+	logrus.Infof("%s 初始化成功",crawler.Config().Description)
 
 	err = crawler.xgbCronCrawler()
 	if err != nil {
 		logrus.Fatalf(" 选股宝定时器启动失败 err : %s", err)
 	}
+	logrus.Infof("%s 定时采集启动 @every 1m runXgbLatest @every 3m runXgbIntervals  ",crawler.Config().Description)
+
 	return err
 }
 
@@ -72,15 +76,20 @@ func (crawler Xgb) xgbCronCrawler() error {
 // 初始化 intervals
 func (crawler Xgb) initXgbLives() error {
 	// init 初始化
+	logrus.Infof("%s 初始化获取数据",crawler.Config().Description)
+
 	resp, err := GetUrlData(xgbLiveUrlInit,"html")
 	if err != nil {
 		logrus.Fatalf("选股宝初始化信息获取失败 GetData URL %s, error: %s", xgbLiveUrlInit,err)
 	}
+	logrus.Infof("%s 解析初始化数据 ",crawler.Config().Description)
 	cursor, err := crawler.initRespParse(resp)
 
 	if err != nil || cursor == 0 {
 		logrus.Fatalf("选股宝初始化信息解析错误 GetData resp %s, error: %s", resp,err)
 	}
+
+	logrus.Infof("%s 初始化游标 ：%d",crawler.Config().Description,cursor)
 
 	err = service.InitLivesIntervals(cursor, config.XgbLivesCrawler,0)
 	if err != nil {
@@ -94,9 +103,12 @@ func (crawler Xgb) getLiveData(getType int) error {
 	var url string
 	switch getType {
 	case xgbGetNew:
+		logrus.Infof("%s 获取新数据 ：",crawler.Config().Description)
 		url = xgbLiveUrlNew
 	case xgbGetIntervals:
 		// 获取cursor
+		logrus.Infof("%s 获取区间数据 ：",crawler.Config().Description)
+
 		cursor := service.GetLivesCursor(config.XgbLivesCrawler,0)
 		if cursor == 0 {
 			return errors.New("xgb游标is 0")
@@ -115,8 +127,10 @@ func (crawler Xgb) getLiveData(getType int) error {
 
 	switch getType {
 	case xgbGetNew:
+		logrus.Infof("%s 解析新数据 ",crawler.Config().Description)
 		livesItem, err = crawler.newRespParse(resp)
 	case xgbGetIntervals:
+		logrus.Infof("%s 解析区间数据 ",crawler.Config().Description)
 		livesItem,next, err = crawler.intervalsRespParse(resp)
 		if next <= 0 {
 			logrus.Errorf("XGB获取游标信息失败 resp %s ,error %s",resp,err)
@@ -129,6 +143,8 @@ func (crawler Xgb) getLiveData(getType int) error {
 		return err
 	}
 	//
+	logrus.Infof("%s 获取到 %d 条数据 ，开始保存数据",crawler.Config().Description,len(livesItem))
+
 	// 数据保存
 	err = service.CreateXgbLivesData(livesItem)
 	if err != nil {
@@ -138,6 +154,7 @@ func (crawler Xgb) getLiveData(getType int) error {
 
 	if getType == xgbGetIntervals {
 		// 处理 cursor
+		logrus.Infof("%s 更新游标 ：%d",crawler.Config().Description,next)
 		err = service.UpdateLivesCursor(config.XgbLivesCrawler, next,0)
 		if err != nil {
 			logrus.Errorf("XGB游标信息更新失败 error %s",err)
@@ -247,7 +264,7 @@ func (crawler Xgb) intervalsRespParse(resp string) ([]service.XgbLivesItems, int
 	respData := resJson.Get("data.messages")
 
 	if !respData.Exists() {
-		err = errors.New("XGB 获取旧信息 解析数据为空")
+		err = errors.New("XGB 获取区间数据 解析数据为空")
 	}
 	// slice of live list
 	lives := make([]service.XgbLivesItems, 0)

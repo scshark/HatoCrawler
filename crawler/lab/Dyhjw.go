@@ -40,14 +40,19 @@ func (crawler Dyhjw) Config() register.CrawlerConfig {
 func (crawler Dyhjw) Get() error {
 
 	// 初始化信息
+	logrus.Infof("%s 开始初始化",crawler.Config().Description)
 	err := crawler.getLiveData(jinseInit)
 	if err != nil {
 		logrus.Fatalf(" 第一黄金网获取数据初始化失败 err : %s", err)
 	}
+	logrus.Infof("%s 初始化成功",crawler.Config().Description)
+
 	err = crawler.dhCronCrawler()
 	if err != nil {
 		logrus.Fatalf("第一黄金网定时器启动失败 %s", err)
 	}
+	logrus.Infof("%s 定时采集启动 @every 1m runDhLates  @every 5m runDhIntervals",crawler.Config().Description)
+
 	return err
 }
 func runDhLatest() {
@@ -70,9 +75,11 @@ func (crawler Dyhjw) getLiveData(getType int) error {
 	var url string
 	switch getType {
 	case hjGetInit,hjGetNew:
+		logrus.Infof("%s 开始新数据获取",crawler.Config().Description)
 		url = hjLiveUrlNew
 	case hjGetIntervals:
 		// 获取cursor
+		logrus.Infof("%s 开始区间数据获取",crawler.Config().Description)
 		cursor := service.GetLivesCursor(config.DyhjwLivesCrawler, 0)
 		if cursor == 0 {
 			return errors.New("第一黄金网获取游标 为 0，无法进行数据获取")
@@ -87,14 +94,18 @@ func (crawler Dyhjw) getLiveData(getType int) error {
 		logrus.Errorf("第一黄金网数据获取失败 url %s, error %s", url, err)
 		return err
 	}
+	logrus.Infof("%s 开始解析数据",crawler.Config().Description)
 
 	livesItem, err := crawler.respParse(resp)
+
+	logrus.Infof("%s 解析数据成功",crawler.Config().Description)
 
 
 	if err != nil || len(livesItem) == 0 {
 		logrus.Errorf("第一黄金网数据解析失败 resp %v, error %s", resp, err)
 		return err
 	}
+	logrus.Infof("%s 获取到数据 %d条,开始保存数据",crawler.Config().Description,len(livesItem))
 
 	// 保存数据
 	err = service.CreateDyhjwLivesData(livesItem)
@@ -107,12 +118,16 @@ func (crawler Dyhjw) getLiveData(getType int) error {
 	case wsGetInit:
 		// 获取id
 		// 获取最后一个id
+		logrus.Infof("%s 开始初始化游标 %d ",crawler.Config().Description,livesItem[len(livesItem)-1].Id)
+
 		cursor, _ := strconv.ParseInt(livesItem[len(livesItem)-1].Id, 10, 64)
 		err = service.InitLivesIntervals(cursor, config.DyhjwLivesCrawler, 0)
 		if err != nil {
 			logrus.Fatalf("第一黄金网初始化游标失败 %s", err)
 		}
 	case wsGetIntervals:
+		logrus.Infof("%s 更新游标 ： %d",crawler.Config().Description,livesItem[len(livesItem)-1].Id)
+
 		cursor, _ := strconv.ParseInt(livesItem[len(livesItem)-1].Id, 10, 64)
 		err = service.UpdateLivesCursor(config.DyhjwLivesCrawler, cursor, 0)
 		if err != nil {

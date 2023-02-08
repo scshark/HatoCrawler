@@ -41,6 +41,8 @@ func (crawler WallStreet) Get() error {
 	if err != nil {
 		logrus.Fatalf("华尔街见闻初始化失败 ：%s", err)
 	}
+	logrus.Infof("%s 初始化成功",crawler.Config().Description)
+
 	// 定时抓取
 	wsCronCrawler()
 	return nil
@@ -61,9 +63,11 @@ func (crawler WallStreet) getLiveData(getType int) error {
 	var url string
 	switch getType {
 	case wsGetInit,wsGetNew:
+		logrus.Infof("%s 开始数据采集",crawler.Config().Description)
 		url = fmt.Sprintf(wsLiveUrl, "", "&first_page=true")
 	case wsGetIntervals:
 		// 获取cursor
+		logrus.Infof("%s 开始区间数据采集",crawler.Config().Description)
 		cursor := service.GetLivesCursor(config.WallStreetLivesCrawler, 0)
 		url = fmt.Sprintf(wsLiveUrl, "&cursor="+strconv.FormatInt(cursor, 10), "&first_page=false")
 	}
@@ -73,14 +77,16 @@ func (crawler WallStreet) getLiveData(getType int) error {
 		logrus.Errorf("华尔街见闻数据获取失败 url %s ,error %s ", url, err)
 		return err
 	}
+	logrus.Infof("%s 开始数据解析",crawler.Config().Description)
 	lives, err := crawler.respParse(resp)
-
 	if err != nil || len(lives.LivesList) == 0 {
 		logrus.Errorf("华尔街见闻数据解析失败 resp %s ,error %s ", resp, err)
 		return err
 	}
 
 	// new or intervals
+	logrus.Infof("%s采集到数据 %d 条， 开始保存数据",crawler.Config().Description,len(lives.LivesList))
+
 	err = service.CreateWallStreetLivesData(lives.LivesList, lives.NextCursor)
 
 	if err != nil {
@@ -90,11 +96,14 @@ func (crawler WallStreet) getLiveData(getType int) error {
 
 	switch getType {
 	case wsGetInit:
+		logrus.Infof("%s 开始初始化游标 : %d",crawler.Config().Description,lives.NextCursor)
+
 		err = service.InitLivesIntervals(lives.NextCursor, config.WallStreetLivesCrawler, 0)
 		if err != nil {
 			logrus.Fatalf("华尔街见闻初始化游标失败 %s", err)
 		}
 	case wsGetIntervals:
+		logrus.Infof("%s 开始更新游标 : %d",crawler.Config().Description,lives.NextCursor)
 		err = service.UpdateLivesCursor( config.WallStreetLivesCrawler,lives.NextCursor, 0)
 		if err != nil {
 			logrus.Fatalf("华尔街见闻更新游标失败 %s", err)
@@ -111,6 +120,8 @@ func wsCronCrawler() {
 	if err != nil {
 		logrus.Fatalf("华尔街见闻定时器启动失败 %s", err)
 	}
+	logrus.Infof("华尔街见闻定时采集启动成功 every 1m runLatest every 5m runIntervals")
+
 	_cron.Start()
 }
 
