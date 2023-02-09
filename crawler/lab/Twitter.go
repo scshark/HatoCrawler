@@ -55,11 +55,11 @@ func cronTweetCrawler() {
 	_cron := cron.New()
 	err := _cron.AddFunc("@daily",runInitLoad)// 每天初始化
 	err = _cron.AddFunc("@every 1m",runLoadNewer)// 每分钟更新
-	err = _cron.AddFunc("@every 3m",runLoadOlder)// 每三分钟获取一次旧消息
+	err = _cron.AddFunc("@every 5m",runLoadOlder)// 每三分钟获取一次旧消息
 	if err != nil {
 		logrus.Fatalf("推特采集定时器启动失败 error: %s\n", err.Error())
 	}
-	logrus.Infof("Twitter 定时采集已启动 daily runInitLoad - every 1mrunLoadNewer - every 3m runLoadOlder")
+	logrus.Infof("Twitter 定时采集已启动 daily runInitLoad - every 1mrunLoadNewer - every 5m runLoadOlder")
 	_cron.Start()
 }
 

@@ -117,11 +117,11 @@ func (crawler WallStreet) getLiveData(getType int) error {
 func wsCronCrawler() {
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runLatest)
-	err = _cron.AddFunc("@every 5m", runIntervals)
+	err = _cron.AddFunc("@every 11m", runIntervals)
 	if err != nil {
 		logrus.Fatalf("华尔街见闻定时器启动失败 %s", err)
 	}
-	logrus.Infof("华尔街见闻定时采集启动成功 every 1m runLatest every 5m runIntervals")
+	logrus.Infof("华尔街见闻定时采集启动成功 every 1m runLatest every 11m runIntervals")
 
 	_cron.Start()
 }
@@ -135,7 +135,7 @@ func (crawler WallStreet) respParse(resp string) (service.WallStreetLives, error
 	nextCur := resJson.Get("data.next_cursor").Int()
 	respData := resJson.Get("data.items")
 
-	
+
 	if !respData.Exists() {
 		err = errors.New("json parse error :live list no data")
 	}

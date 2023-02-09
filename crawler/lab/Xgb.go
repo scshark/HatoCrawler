@@ -51,7 +51,7 @@ func (crawler Xgb) Get() error {
 	if err != nil {
 		logrus.Fatalf(" 选股宝定时器启动失败 err : %s", err)
 	}
-	logrus.Infof("%s 定时采集启动 @every 1m runXgbLatest @every 3m runXgbIntervals  ",crawler.Config().Description)
+	logrus.Infof("%s 定时采集启动 @every 1m runXgbLatest @every 13m runXgbIntervals  ",crawler.Config().Description)
 
 	return err
 }
@@ -66,7 +66,7 @@ func runXgbIntervals() {
 func (crawler Xgb) xgbCronCrawler() error {
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runXgbLatest)
-	err = _cron.AddFunc("@every 3m", runXgbIntervals)
+	err = _cron.AddFunc("@every 13m", runXgbIntervals)
 	if err != nil {
 		return err
 	}

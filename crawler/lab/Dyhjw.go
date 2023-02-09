@@ -51,7 +51,7 @@ func (crawler Dyhjw) Get() error {
 	if err != nil {
 		logrus.Fatalf("第一黄金网定时器启动失败 %s", err)
 	}
-	logrus.Infof("%s 定时采集启动 @every 1m runDhLates  @every 5m runDhIntervals",crawler.Config().Description)
+	logrus.Infof("%s 定时采集启动 @every 1m runDhLates  @every 12m runDhIntervals",crawler.Config().Description)
 
 	return err
 }
@@ -65,7 +65,7 @@ func (crawler Dyhjw) dhCronCrawler() error {
 
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runDhLatest)
-	err = _cron.AddFunc("@every 5m", runDhIntervals)
+	err = _cron.AddFunc("@every 12m", runDhIntervals)
 	_cron.Start()
 	return err
 }

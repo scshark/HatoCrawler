@@ -49,12 +49,12 @@ func jinseCronCrawler() error {
 
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runRefresh)
-	err = _cron.AddFunc("@every 10m", runHistory)
+	err = _cron.AddFunc("@every 7m", runHistory)
 	if err != nil {
 		logrus.Error("金色财经定时器错误%s", err.Error())
 	}
 	_cron.Start()
-	logrus.Infof("金色财经定时采集已开启 @every 1m runRefresh @every 10m runHistory")
+	logrus.Infof("金色财经定时采集已开启 @every 1m runRefresh @every 7m runHistory")
 	return err
 }
 
