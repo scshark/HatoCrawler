@@ -1,11 +1,11 @@
 package main
 
 import (
-	"SecCrawler/config"
-	"SecCrawler/crawler"
-	"SecCrawler/internal"
-	"SecCrawler/register"
-	"SecCrawler/utils"
+	"HatoCrawler/config"
+	"HatoCrawler/crawler"
+	"HatoCrawler/internal"
+	"HatoCrawler/register"
+	"HatoCrawler/utils"
 	"flag"
 	"fmt"
 	"log"

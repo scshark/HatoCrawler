@@ -1,10 +1,10 @@
 package crawler
 
 import (
-	"SecCrawler/config"
-	. "SecCrawler/config"
-	"SecCrawler/register"
-	"SecCrawler/utils"
+	"HatoCrawler/config"
+	. "HatoCrawler/config"
+	"HatoCrawler/register"
+	"HatoCrawler/utils"
 	"errors"
 	"fmt"
 	"net/http"

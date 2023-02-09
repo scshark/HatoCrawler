@@ -6,7 +6,7 @@
  */
 package core
 
-import "SecCrawler/internal/model"
+import "HatoCrawler/internal/model"
 
 type IntervalsService interface {
 

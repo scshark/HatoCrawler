@@ -1,9 +1,9 @@
 package crawler
 
 import (
-	. "SecCrawler/config"
-	"SecCrawler/crawler/lab"
-	"SecCrawler/register"
+	. "HatoCrawler/config"
+	"HatoCrawler/crawler/lab"
+	"HatoCrawler/register"
 )
 
 func CrawlerInit() {

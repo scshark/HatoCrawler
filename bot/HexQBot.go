@@ -1,9 +1,9 @@
 package bot
 
 import (
-	. "SecCrawler/config"
-	"SecCrawler/register"
-	"SecCrawler/utils"
+	. "HatoCrawler/config"
+	"HatoCrawler/register"
+	"HatoCrawler/utils"
 	"fmt"
 	"io/ioutil"
 	"net/http"

@@ -1,8 +1,8 @@
 package bot
 
 import (
-	. "SecCrawler/config"
-	"SecCrawler/register"
+	. "HatoCrawler/config"
+	"HatoCrawler/register"
 )
 
 func BotInit() {

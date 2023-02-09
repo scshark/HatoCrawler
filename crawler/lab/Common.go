@@ -7,7 +7,7 @@
 package lab
 
 import (
-	"SecCrawler/utils"
+	"HatoCrawler/utils"
 	"bytes"
 	"github.com/sirupsen/logrus"
 	"net/http"

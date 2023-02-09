@@ -7,8 +7,8 @@
 package internal
 
 import (
-	"SecCrawler/internal/conf"
-	"SecCrawler/internal/service"
+	"HatoCrawler/internal/conf"
+	"HatoCrawler/internal/service"
 )
 
 func Internal() {

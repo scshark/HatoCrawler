@@ -7,9 +7,9 @@
 package lab
 
 import (
-	"SecCrawler/internal/service"
-	"SecCrawler/register"
-	"SecCrawler/utils"
+	"HatoCrawler/internal/service"
+	"HatoCrawler/register"
+	"HatoCrawler/utils"
 	"bytes"
 	"encoding/json"
 	"errors"

@@ -7,8 +7,8 @@
 package dao
 
 import (
-	"SecCrawler/internal/core"
-	"SecCrawler/internal/dao/jinzhu"
+	"HatoCrawler/internal/core"
+	"HatoCrawler/internal/dao/jinzhu"
 	"sync"
 )
 

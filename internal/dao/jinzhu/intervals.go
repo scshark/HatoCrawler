@@ -7,8 +7,8 @@
 package jinzhu
 
 import (
-	"SecCrawler/internal/core"
-	"SecCrawler/internal/model"
+	"HatoCrawler/internal/core"
+	"HatoCrawler/internal/model"
 	"gorm.io/gorm"
 )
 

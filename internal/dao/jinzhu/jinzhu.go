@@ -7,8 +7,8 @@
 package jinzhu
 
 import (
-	"SecCrawler/internal/conf"
-	"SecCrawler/internal/core"
+	"HatoCrawler/internal/conf"
+	"HatoCrawler/internal/core"
 )
 
 var (

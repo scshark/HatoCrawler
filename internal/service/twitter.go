@@ -7,7 +7,7 @@
 package service
 
 import (
-	"SecCrawler/internal/model"
+	"HatoCrawler/internal/model"
 	"errors"
 	"github.com/sirupsen/logrus"
 	"math/big"

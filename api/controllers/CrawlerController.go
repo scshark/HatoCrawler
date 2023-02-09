@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"SecCrawler/register"
-	"SecCrawler/utils"
+	"HatoCrawler/register"
+	"HatoCrawler/utils"
 	"fmt"
 
 	"github.com/gin-gonic/gin"

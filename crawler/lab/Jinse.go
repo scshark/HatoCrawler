@@ -1,9 +1,9 @@
 package lab
 
 import (
-	"SecCrawler/config"
-	"SecCrawler/internal/service"
-	"SecCrawler/register"
+	"HatoCrawler/config"
+	"HatoCrawler/internal/service"
+	"HatoCrawler/register"
 	"encoding/json"
 	"errors"
 	"fmt"

@@ -7,8 +7,8 @@
 package service
 
 import (
-	"SecCrawler/internal/core"
-	"SecCrawler/internal/dao"
+	"HatoCrawler/internal/core"
+	"HatoCrawler/internal/dao"
 )
 
 var (

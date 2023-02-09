@@ -6,7 +6,7 @@
  */
 package core
 
-import "SecCrawler/internal/model"
+import "HatoCrawler/internal/model"
 
 type XgbService interface {
 	CreateXgbLives(dh *model.Xgb,items []model.Xgb) (*model.Xgb, error)

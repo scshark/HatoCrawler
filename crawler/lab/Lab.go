@@ -1,8 +1,8 @@
 package lab
 
 import (
-	. "SecCrawler/config"
-	"SecCrawler/register"
+	. "HatoCrawler/config"
+	"HatoCrawler/register"
 	"errors"
 	"github.com/sirupsen/logrus"
 	"time"

@@ -6,7 +6,7 @@
  */
 package core
 
-import "SecCrawler/internal/model"
+import "HatoCrawler/internal/model"
 
 type DyhjwService interface {
 	CreateDyhjwLives(dh *model.Dyhjw,items []model.Dyhjw) (*model.Dyhjw, error)

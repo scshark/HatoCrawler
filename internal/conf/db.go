@@ -7,7 +7,7 @@
 package conf
 
 import (
-	. "SecCrawler/config"
+	. "HatoCrawler/config"
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"

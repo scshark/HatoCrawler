@@ -7,7 +7,7 @@
 package core
 
 import (
-	"SecCrawler/internal/model"
+	"HatoCrawler/internal/model"
 	"math/big"
 )
 

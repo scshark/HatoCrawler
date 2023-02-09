@@ -6,7 +6,7 @@
  */
 package core
 
-import "SecCrawler/internal/model"
+import "HatoCrawler/internal/model"
 
 type WallStreetService interface {
 	CreateWsLives(ws *model.WallStreet,items []model.WallStreet) (*model.WallStreet, error)

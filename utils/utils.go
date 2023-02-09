@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"SecCrawler/config"
+	"HatoCrawler/config"
 	"fmt"
 	"net/http"
 	"net/url"

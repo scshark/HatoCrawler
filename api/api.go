@@ -1,9 +1,9 @@
 package api
 
 import (
-	"SecCrawler/api/controllers"
-	"SecCrawler/config"
-	"SecCrawler/utils"
+	"HatoCrawler/api/controllers"
+	"HatoCrawler/config"
+	"HatoCrawler/utils"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
