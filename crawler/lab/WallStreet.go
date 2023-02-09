@@ -74,8 +74,6 @@ func (crawler WallStreet) getLiveData(getType int) error {
 
 	resp, err := GetUrlData(url,"json")
 
-	fmt.Printf("sss %s",resp)
-	panic("2313")
 	if err != nil {
 		logrus.Errorf("华尔街见闻数据获取失败 url %s ,error %s ", url, err)
 		return err
@@ -137,6 +135,7 @@ func (crawler WallStreet) respParse(resp string) (service.WallStreetLives, error
 	nextCur := resJson.Get("data.next_cursor").Int()
 	respData := resJson.Get("data.items")
 
+	
 	if !respData.Exists() {
 		err = errors.New("json parse error :live list no data")
 	}
