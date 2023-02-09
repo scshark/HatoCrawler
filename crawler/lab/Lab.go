@@ -50,9 +50,9 @@ func (crawler Lab) Get() error {
 	// }
 
 
-	if Cfg.Crawler.Lab.Jinse.Enabled {
-		resultSlice = tmpCrawler(resultSlice, Jinse{})
-	}
+	//if Cfg.Crawler.Lab.Jinse.Enabled {
+	//	resultSlice = tmpCrawler(resultSlice, Jinse{})
+	//}
 	if Cfg.Crawler.Lab.WallStreet.Enabled {
 		resultSlice = tmpCrawler(resultSlice, WallStreet{})
 	}

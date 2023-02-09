@@ -73,6 +73,9 @@ func (crawler WallStreet) getLiveData(getType int) error {
 	}
 
 	resp, err := GetUrlData(url,"json")
+
+	fmt.Printf("sss %s",resp)
+	panic("2313")
 	if err != nil {
 		logrus.Errorf("华尔街见闻数据获取失败 url %s ,error %s ", url, err)
 		return err
