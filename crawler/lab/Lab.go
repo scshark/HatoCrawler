@@ -77,6 +77,7 @@ func tmpCrawler(s [][]string, crawler register.Crawler) [][]string {
 		logrus.Errorf("crawl [%s] error: %s\n\n", crawler.Config().Name, err.Error())
 	}
 	logrus.Infof("%s采集器： 启动成功",crawler.Config().Description)
+	logrus.Info("采集器启动 time sleep 10 second")
 	time.Sleep(10 * time.Second)
 	return s
 }

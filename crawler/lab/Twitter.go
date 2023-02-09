@@ -31,7 +31,6 @@ const (
 	twitterGetUrl = "https://socialbearing.com/scripts/get-tweets.php?%s&search=%s&searchtype=user"
 )
 
-// var twitterUserCrawler = []string{"SpaceX", "elonmusk", "0xzxcom", "ChineseWSJ", "caolei1", "RayDalio", "cz_binance", "bbcchinese", "ESPNFC", "WarriorNationCP", "WeAreMessi"}
 
 func (crawler Twitter) Config() register.CrawlerConfig {
 	return register.CrawlerConfig{
@@ -43,10 +42,10 @@ func (crawler Twitter) Config() register.CrawlerConfig {
 func (crawler Twitter) Get() error {
 
 	var err error
-	// err = crawler.initTwitterLives()
-	// if err != nil {
-	// 	logrus.Errorf("推特采集初始化错误 initTwitterLives err : %s", err)
-	// }
+	err = crawler.initTwitterLives()
+	if err != nil {
+		logrus.Errorf("推特采集初始化错误 initTwitterLives err : %s", err)
+	}
 	// 定时采集
 	cronTweetCrawler()
 	return err
@@ -60,6 +59,7 @@ func cronTweetCrawler() {
 	if err != nil {
 		logrus.Fatalf("推特采集定时器启动失败 error: %s\n", err.Error())
 	}
+	logrus.Infof("Twitter 定时采集已启动 daily runInitLoad - every 1mrunLoadNewer - every 3m runLoadOlder")
 	_cron.Start()
 }
 
@@ -94,20 +94,26 @@ func runLoadOlder() {
  */
 func (crawler Twitter) loadNewerTwitter() error {
 
+	logrus.Info("推特开始采集新信息 ")
 	// 获取用户的 name
 	tweetUser := service.GetTweetUserForLoad(service.LoadNewer)
+
+	logrus.Infof("此次采集推特新消息的 用户 ：%s ",tweetUser.Name)
 
 	if tweetUser == nil {
 		return errors.New("GetTweetUserForLoad error : record not found")
 	}
 
 	// 获取用户最新的推特id
+
 	lastTw := service.GetTwUserLastTweet(tweetUser.ID)
+
+	logrus.Infof("此次采集推特新消息的 用户 最近一条推特 id ：%s ",lastTw.IdStr)
 
 	// 获取信息地址
 	getUrl := fmt.Sprintf(twitterGetUrl, "sid="+lastTw.IdStr, tweetUser.ScreenName)
 
-	logrus.Debugf("获取推特信息地址：%s",getUrl)
+	logrus.Infof("此次采集推特新消息的 用户 ：%s ,获取链接 %s ",tweetUser.Name,getUrl)
 
 	resp, err := crawler.GetData(getUrl)
 	if err != nil {
@@ -115,14 +121,17 @@ func (crawler Twitter) loadNewerTwitter() error {
 		return err
 	}
 
+	logrus.Infof("此次采集推特新消息的 用户 ：%s , 开始解析数据",tweetUser.Name)
+
 	tw, err := crawler.respParse(resp)
 
 	if err != nil {
 		logrus.Warnf("loadNewerTwitter  respParse error: %s",err)
 		return err
 	}
+
 	if len(tw.Items) == 0  {
-		logrus.Warnf("推特用户%s 数据已经最新",tweetUser.Name)
+		logrus.Infof("推特用户%s 数据已经最新，更新用户推特更新时间LoadTime",tweetUser.Name)
 		err = service.UpdateUserLoadTime(service.LoadNewer,tweetUser)
 		if err !=nil {
 			logrus.Errorf("更新推特用户更新时间失败 err :%s",err)
@@ -136,37 +145,47 @@ func (crawler Twitter) loadNewerTwitter() error {
 		logrus.Warnf("当前推特用户ID丢失 err :%s",err)
 		return err
 	}
+
+	logrus.Infof("推特用户%s 采集到 %d 个用户信息",tweetUser.Name,len(tw.ReplyUser) + 1)
+
 	user := []service.TwitterUser{tw.User}
 	for _, u := range tw.ReplyUser {
 		user = append(user, u)
 	}
 
-	_, err = service.SaveTweetUser(user)
+	tmpUser, err := service.SaveTweetUser(user)
+
 
 	if err != nil {
 		logrus.Errorf("推特用户保存失败 err :%s",err)
 		return err
 	}
+	logrus.Infof("推特用户%s 用户信息更新成功，共保存 %d 个用户信息",tweetUser.Name,len(tmpUser))
+
 
 	// save twitter
+	logrus.Infof("推特用户%s，用户推特id %d，采集类型：新消息， 此次共采集到 %d 新消息 ，开始保存数据",tweetUser.Name,tweetUser.ID,len(tw.Items))
+
 	err = service.CreateTwitterListData(tweetUser.ID, tw.Items)
 	if err != nil {
 		logrus.Errorf("推特信息保存失败 err :%s",err)
 		return err
 	}
 	// save reply twitter
+	logrus.Infof("推特用户%s，采集类型：新消息（回复）， 此次共采集到 %d 回复消息 ，开始保存数据",tweetUser.Name,len(tw.ReplyItems))
 	err = service.CreateTwitterListData(0, tw.ReplyItems)
 	if err != nil {
 		logrus.Errorf("推特回复信息保存失败 err :%s",err)
 		return err
 	}
-
+	logrus.Infof("推特用户%s，更新用户推特采集新消息时间 LoadTime",tweetUser.Name)
 	// 更新用户获取信息时间
 	err = service.UpdateUserLoadTime(service.LoadNewer,tweetUser)
 	if err !=nil {
 		logrus.Errorf("更新推特用户更新时间失败 err :%s",err)
 		return  err
 	}
+	logrus.Infof("推特用户%s 完成新信息采集",tweetUser.Name)
 
 	return err
 }
@@ -184,23 +203,32 @@ func (crawler Twitter) loadNewerTwitter() error {
 func (crawler Twitter) loadOlderTwitter() error {
 
 
+	logrus.Info("推特开始采集区间信息 ")
+
 	// 获取用户的 name
 	tweetUser := service.GetTweetUserForLoad(service.LoadOlder)
+
+	logrus.Infof("推特此次获取区间信息用户为 ： %s ",tweetUser.Name)
 
 	if tweetUser == nil {
 		return errors.New("GetTweetUserForLoad error : record not found")
 	}
 
 	lastTw := service.GetTwUserFirstTweet(tweetUser.ID)
+	logrus.Infof("推特此次获取区间信息用户最新一条推特ID为 ： %s ",lastTw.IdStr)
+
 
 	getUrl := fmt.Sprintf(twitterGetUrl, "oid="+lastTw.IdStr, tweetUser.ScreenName)
-	logrus.Tracef("获取推特信息地址 : %s",getUrl)
+
+
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 获取链接 %s",tweetUser.Name,getUrl)
 	resp, err := crawler.GetData(getUrl)
 
 	if err != nil {
 		logrus.Errorf("推特信息获取失败 respParse error: %s",err)
 		return err
 	}
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 开始解析数据",tweetUser.Name)
 
 	tw, err := crawler.respParse(resp)
 
@@ -210,7 +238,7 @@ func (crawler Twitter) loadOlderTwitter() error {
 	}
 
 	if len(tw.Items) == 0  {
-		logrus.Warnf("推特用户%s 没有可以获取的旧数据",tweetUser.Name)
+		logrus.Infof("推特此次获取区间信息用户为 ： %s , 没有获取到新信息，更新用户区间采集信息时间 load_older_time",tweetUser.Name)
 		err = service.UpdateUserLoadTime(service.LoadOlder,tweetUser)
 		if err !=nil {
 			logrus.Errorf("更新推特用户更新时间失败 err :%s",err)
@@ -224,37 +252,43 @@ func (crawler Twitter) loadOlderTwitter() error {
 		logrus.Errorf("当前推特用户ID丢失 err :%s",err)
 		return err
 	}
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 共获取 %d 条用户数据",tweetUser.Name,len(tw.ReplyUser) + 1)
+
 	user := []service.TwitterUser{tw.User}
 	for _, u := range tw.ReplyUser {
 		user = append(user, u)
 	}
 
-	_, err = service.SaveTweetUser(user)
+
+	tmpUser, err := service.SaveTweetUser(user)
 
 	if err != nil {
 		logrus.Errorf("推特用户信息保存失败 err :%s",err)
 		return err
 	}
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 共保存 %d 条用户数据",tweetUser.Name,len(tmpUser))
 
-
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 共采集到 %d 条区间信息",tweetUser.Name,len(tw.Items))
 	// save twitter
 	err = service.CreateTwitterListData(tweetUser.ID, tw.Items)
 	if err != nil {
 		logrus.Errorf("推特信息保存失败 err :%s",err)
 		return err
 	}
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 共采集到 %d 条区间回复信息",tweetUser.Name,len(tw.ReplyItems))
 	// save reply twitter
 	err = service.CreateTwitterListData(0, tw.ReplyItems)
 	if err != nil {
 		logrus.Errorf("推特回复信息保存失败 err :%s",err)
 		return err
 	}
-
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 更新用户区间采集时间 load older time",tweetUser.Name)
 	err = service.UpdateUserLoadTime(service.LoadOlder,tweetUser)
 	if err !=nil {
 		logrus.Errorf("推特用户信息更新时间保存 err :%s",err)
 		return  err
 	}
+	logrus.Infof("推特此次获取区间信息用户为 ： %s , 区间数据采集完成",tweetUser.Name)
 
 	return err
 
@@ -273,16 +307,19 @@ func (crawler Twitter) initTwitterLives() error {
 	var err error
 	// 需要初始化推特用户的列表
 
+	logrus.Infof(" %s 初始化开始，初始化用户列表 %v",crawler.Config().Description,crawler.ScreenName)
 	for _, t := range crawler.ScreenName {
 
 		getUrl := fmt.Sprintf(twitterGetUrl, "sid=0", t)
-		logrus.Tracef("获取推特信息地址 : %s",getUrl)
+
+		logrus.Infof("初始化获取用户：%s，获取推特信息地址 : %s",t,getUrl)
 		resp, err := crawler.GetData(getUrl)
 
 		if err != nil {
 			return err
 		}
 
+		logrus.Infof("初始化获取用户：%s，开始解析数据",t)
 		tw, err := crawler.respParse(resp)
 
 		if err != nil {
@@ -292,16 +329,21 @@ func (crawler Twitter) initTwitterLives() error {
 			logrus.Warnf("推特用户%s 没有获取到数据",t)
 			continue
 		}
+		logrus.Infof("已获取到用户推特信息: %s，推特 %d 条，回复用户 %d 个 ，回复推特 %d 条",t,len(tw.Items),len(tw.ReplyUser),len(tw.ReplyItems))
+
 		// save user
 		if tw.User.IdStr == "" {
 			logrus.Errorf("当前推特用户ID丢失 err :%s",err)
 			return err
 		}
+		logrus.Infof("初始化获取用户：%s, 开始保存用户信息, 需要保存 %d 个用户",t,len(tw.ReplyUser) + 1)
 		user := []service.TwitterUser{tw.User}
 		for _, u := range tw.ReplyUser {
 			user = append(user, u)
 		}
 		sTwUser, err := service.SaveTweetUser(user)
+
+		logrus.Infof("初始化获取用户：%s，此次保存 %d 用户",t,len(sTwUser))
 
 		if err != nil {
 			return err
@@ -313,16 +355,22 @@ func (crawler Twitter) initTwitterLives() error {
 
 		tweetUser := sTwUser[0]
 		// save twitter
+		logrus.Infof("初始化获取用户：%s, 开始保存用户推特, 需要保存 %d 条推特",t,len(tw.Items))
+
 		err = service.CreateTwitterListData(tweetUser.UserId, tw.Items)
 		if err != nil {
 			return err
 		}
 		// save reply twitter
+		logrus.Infof("初始化获取用户：%s, 开始保存用户回复推特, 需要保存 %d 条回复推特",t,len(tw.ReplyItems))
 		err = service.CreateTwitterListData(0, tw.ReplyItems)
 		if err != nil {
 			return err
 		}
 		// sleep 30s
+		logrus.Infof("推特用户%s 完成初始化信息采集",t)
+
+		logrus.Info("推特采集初始化 time sleep 55 second")
 		time.Sleep(55 * time.Second)
 
 	}

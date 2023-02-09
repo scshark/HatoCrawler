@@ -66,6 +66,7 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 
 	if twUser.Model != nil && twUser.Model.ID > 0 {
 
+		logrus.Infof("name: %s 更新推特用户信息",u.Name)
 		twUser.Name = u.Name
 		twUser.Description = u.Description
 		twUser.Location = u.Location
@@ -78,6 +79,7 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 		err = ds.UpdateTweetUser(twUser)
 
 	} else {
+		logrus.Infof("name: %s 新增推特用户信息",u.Name)
 		var user = &model.TwitterUser{
 			TweetUserId:      u.IdStr,
 			Name:             u.Name,
@@ -140,6 +142,8 @@ func CreateTwitterListData(userId int64, tw []TwitterItems) error {
 		if err != nil {
 			logrus.Errorf("CreateTwitter error : %s", err)
 		}
+		logrus.Infof("推特信息保存成功，共 %d 条",len(mData))
+
 	}
 	return err
 }
