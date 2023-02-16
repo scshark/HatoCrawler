@@ -37,6 +37,8 @@ type TwitterUser struct {
 	ProfileImageUrl  string   `json:"profile_image_url"`
 	ProfileBannerUrl string   `json:"profile_banner_url"`
 	CreatedAt        int64    `json:"created_at"`
+	FollowersCount        int64    `json:"followers_count"`
+	FriendsCount        int64    `json:"friends_count"`
 }
 
 type TwitterItems struct {
@@ -75,6 +77,9 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 		twUser.ProfileImageUrl = u.ProfileImageUrl
 		twUser.TweetCreatedAt = u.CreatedAt
 		twUser.Urls = u.Url
+		twUser.FriendsCount = u.FriendsCount
+		twUser.FollowersCount = u.FollowersCount
+		twUser.NeedHatoUpdate = 1
 
 		err = ds.UpdateTweetUser(twUser)
 
@@ -92,6 +97,9 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 			TweetCreatedAt:   u.CreatedAt,
 			LoadType:         LoadAll,
 			TwitterLoadTime:  time.Now().Unix(),
+			FriendsCount: u.FriendsCount,
+			FollowersCount: u.FollowersCount,
+			NeedHatoUpdate: 1,
 		}
 		twUser, err = ds.CreateTweetUser(user)
 		if err != nil {
@@ -175,18 +183,36 @@ func GetTweetUserForLoad(loadType uint) *model.TwitterUser {
 	switch loadType {
 
 	case LoadNewer:
+		// 只获取100W粉丝以上的
 		tUser = &model.TwitterUser{
 			LoadType:        OnlyLoadNewer,
+			FollowersCount: 20000,
 		}
 	case LoadOlder:
 		tUser = &model.TwitterUser{
 			LoadType:      OnlyLoadOlder,
+			FollowersCount: 20000,
 		}
 	default:
 		return nil
 	}
 	twUser := ds.GetTweetUserForLoad(tUser)
 
+	// 如果用户已经存在 5000 条记录 ，就不加载 旧记录 OnlyLoadNewer
+	twCount, err := ds.CountTweetByUserId(twUser.ID, &model.ConditionsT{
+		"ORDER": "id desc",
+	})
+	if err !=nil {
+		logrus.Errorf("CountTweetByUserId 统计推特用户已获取推文数量 错误 %s",err)
+	}
+	if twCount > 5000 {
+		twUser.LoadType = OnlyLoadNewer
+		err = ds.UpdateTweetUser(twUser)
+
+		if err != nil{
+			logrus.Errorf("UpdateTweetUser 更新用户获取推文类型（推文获取限制） 错误 %s",err)
+		}
+	}
 	return twUser
 }
 

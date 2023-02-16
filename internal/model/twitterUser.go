@@ -26,6 +26,9 @@ type TwitterUser struct {
 	TwitterLoadTime  int64  `json:"twitter_load_time"`
 	LoadOlderTime    int64  `json:"load_older_time"`
 	LoadType         int64  `json:"load_type"`
+	FollowersCount         int64  `json:"followers_count"`
+	FriendsCount         int64  `json:"friends_count"`
+	NeedHatoUpdate         int64  `json:"need_hato_update"`
 }
 
 func (t *TwitterUser) Create(db *gorm.DB) (*TwitterUser, error) {
@@ -50,6 +53,9 @@ func (t *TwitterUser) First(db *gorm.DB) (*TwitterUser, error) {
 		}
 	}
 
+	if t.FollowersCount > 0 {
+		db = db.Where("followers_count > ?",t.FollowersCount)
+	}
 	err := db.Limit(1).Find(&twUser).Error
 	return &twUser, err
 }

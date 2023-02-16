@@ -59,3 +59,17 @@ func (t *Twitter) Exists(db *gorm.DB) error {
 	err := db.First(&tw).Error
 	return err
 }
+
+
+func (t *Twitter) Count(db *gorm.DB,c *ConditionsT) (int64,error) {
+	var count int64
+	for k, v := range *c {
+		if k != "ORDER" {
+			db = db.Where(k, v)
+		}
+	}
+	if err := db.Model(t).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count,nil
+}

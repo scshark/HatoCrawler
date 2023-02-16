@@ -15,6 +15,7 @@ type TweetService interface {
 	CreateTweet(te *model.Twitter,data []model.Twitter) error
 	TweetIsExists(id *big.Int) bool
 	GetTweetByUserId(userId int64,c *model.ConditionsT) (*model.Twitter,error)
+	CountTweetByUserId(userId int64,c *model.ConditionsT) (int64,error)
 }
 
 type TweetUserService interface {

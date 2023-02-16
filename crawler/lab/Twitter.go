@@ -54,8 +54,8 @@ func (crawler Twitter) Get() error {
 func cronTweetCrawler() {
 	_cron := cron.New()
 	err := _cron.AddFunc("@daily",runInitLoad)// 每天初始化
-	err = _cron.AddFunc("@every 1m",runLoadNewer)// 每分钟更新
-	err = _cron.AddFunc("@every 5m",runLoadOlder)// 每三分钟获取一次旧消息
+	err = _cron.AddFunc("@every 15s",runLoadNewer)// 每15秒更新
+	err = _cron.AddFunc("@every 5m",runLoadOlder)// 每5分钟获取一次旧消息
 	if err != nil {
 		logrus.Fatalf("推特采集定时器启动失败 error: %s\n", err.Error())
 	}
@@ -479,7 +479,8 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 						isAppendRpU = false
 					}
 				}
-				if isAppendRpU {
+				// 只添加粉丝2W以上的账户
+				if isAppendRpU && rpUser.FollowersCount > 20000{
 					rpUserId = append(rpUserId, rpUser.IdStr)
 					repUser = append(repUser, rpUser)
 				}
@@ -634,6 +635,10 @@ func (crawler Twitter) tweetUserEntitiesParse(result gjson.Result) (user service
 			user.Location = v.Str
 		case "description":
 			user.Description = v.Str
+		case "followers_count":
+			user.FollowersCount = v.Int()
+		case "friends_count":
+			user.FriendsCount = v.Int()
 		case "profile_image_url_https":
 			user.ProfileImageUrl = v.Str
 		case "profile_banner_url":

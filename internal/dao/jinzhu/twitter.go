@@ -71,6 +71,13 @@ func (t *tweetServant)GetTweetByUserId(userId int64,c *model.ConditionsT)(*model
 	return  tweet.First(t.db,c)
 
 }
+func (t *tweetServant)CountTweetByUserId(userId int64,c *model.ConditionsT)(int64,error)  {
+	tweet := &model.Twitter{
+		HtTwitterUserId:userId,
+	}
+	return  tweet.Count(t.db,c)
+
+}
 
 
 
