@@ -479,8 +479,8 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 						isAppendRpU = false
 					}
 				}
-				// 只添加粉丝2W以上的账户
-				if isAppendRpU && rpUser.FollowersCount > 20000{
+				// 只添加粉丝15W以上的账户
+				if isAppendRpU && rpUser.FollowersCount > 155555{
 					rpUserId = append(rpUserId, rpUser.IdStr)
 					repUser = append(repUser, rpUser)
 				}
