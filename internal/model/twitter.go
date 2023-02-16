@@ -63,6 +63,9 @@ func (t *Twitter) Exists(db *gorm.DB) error {
 
 func (t *Twitter) Count(db *gorm.DB,c *ConditionsT) (int64,error) {
 	var count int64
+	if  t.HtTwitterUserId > 0 {
+		db = db.Where("ht_twitter_user_id= ? AND is_del = ?", t.HtTwitterUserId, 0)
+	}
 	for k, v := range *c {
 		if k != "ORDER" {
 			db = db.Where(k, v)

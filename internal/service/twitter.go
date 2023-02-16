@@ -205,6 +205,7 @@ func GetTweetUserForLoad(loadType uint) *model.TwitterUser {
 	if err !=nil {
 		logrus.Errorf("CountTweetByUserId 统计推特用户已获取推文数量 错误 %s",err)
 	}
+	logrus.Infof("CountTweetByUserId 统计推特用户已获取推文数量 用户 %s ,已获取 推文 %d 条",twUser.ScreenName,twCount)
 	if twCount > 5000 {
 		twUser.LoadType = OnlyLoadNewer
 		err = ds.UpdateTweetUser(twUser)
