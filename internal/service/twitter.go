@@ -81,7 +81,7 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 		twUser.FriendsCount = u.FriendsCount
 		twUser.FollowersCount = u.FollowersCount
 		twUser.NeedHatoUpdate = 1
-		twUser.LoadType = u.LoadType
+		//twUser.LoadType = u.LoadType
 
 		err = ds.UpdateTweetUser(twUser)
 

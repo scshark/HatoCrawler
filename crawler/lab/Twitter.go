@@ -487,6 +487,7 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 			} else {
 				isAppendRpU := false
 				hasChinese := false
+				rpUser.LoadType = 0
 				for _,n := range rpUser.Name{
 					if unicode.Is(unicode.Han,n) {
 						hasChinese = true
@@ -496,8 +497,6 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 
 				if hasChinese {
 					rpUser.LoadType = 3
-				}else {
-					rpUser.LoadType = 0
 				}
 				// 只添加粉丝15W以上的账户
 				if hasChinese && rpUser.FollowersCount > 175555 {
