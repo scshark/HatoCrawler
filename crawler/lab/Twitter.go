@@ -444,7 +444,7 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 	repUser := make([]service.TwitterUser, 0)
 	tw := make([]service.TwitterItems, 0)
 	replyTw := make([]service.TwitterItems, 0)
-	rpUserId := make([]string, 0)
+	//rpUserId := make([]string, 0)
 	// replyUser := make([]service.TwitterUser,0)
 	resJson.ForEach(func(key, value gjson.Result) bool {
 
@@ -476,46 +476,46 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 		tw = append(tw, tweet)
 
 		// 抽取 retweet user
-		if value.Get("retweeted_status").Exists() {
-			// rpUser是否已经存在slice里
-
-			// 把reply的user 加入到slice
-			rpUser, err := crawler.tweetUserEntitiesParse(value.Get("retweeted_status.user"))
-
-			if err != nil {
-				logrus.Errorf("json parse retweeted_status tweetUserEntitiesParse error %s",err )
-			} else {
-				isAppendRpU := false
-				rpUser.LoadType = 0
-
-				// 只添加粉丝15W以上的账户
-				if rpUser.FollowersCount > 155555 {
-					isAppendRpU = true
-				}
-
-				for _, i := range rpUserId {
-					if i == rpUser.IdStr {
-						isAppendRpU = false
-					}
-				}
-
-				if isAppendRpU{
-					rpUserId = append(rpUserId, rpUser.IdStr)
-					repUser = append(repUser, rpUser)
-				}
-			}
-
-			// rp tweet
-			reTweet, err := crawler.tweetEntitiesParse(value.Get("retweeted_status"))
-			if err != nil {
-
-				logrus.Warnf("tweet parse retweeted_status error %s", err)
-				return true
-			}
-
-			replyTw = append(replyTw, reTweet)
-
-		}
+		//if value.Get("retweeted_status").Exists() {
+		//	// rpUser是否已经存在slice里
+		//
+		//	// 把reply的user 加入到slice
+		//	rpUser, err := crawler.tweetUserEntitiesParse(value.Get("retweeted_status.user"))
+		//
+		//	if err != nil {
+		//		logrus.Errorf("json parse retweeted_status tweetUserEntitiesParse error %s",err )
+		//	} else {
+		//		isAppendRpU := false
+		//		rpUser.LoadType = 0
+		//
+		//		// 只添加粉丝15W以上的账户
+		//		if rpUser.FollowersCount > 155555 {
+		//			isAppendRpU = true
+		//		}
+		//
+		//		for _, i := range rpUserId {
+		//			if i == rpUser.IdStr {
+		//				isAppendRpU = false
+		//			}
+		//		}
+		//
+		//		if isAppendRpU{
+		//			rpUserId = append(rpUserId, rpUser.IdStr)
+		//			repUser = append(repUser, rpUser)
+		//		}
+		//	}
+		//
+		//	// rp tweet
+		//	reTweet, err := crawler.tweetEntitiesParse(value.Get("retweeted_status"))
+		//	if err != nil {
+		//
+		//		logrus.Warnf("tweet parse retweeted_status error %s", err)
+		//		return true
+		//	}
+		//
+		//	replyTw = append(replyTw, reTweet)
+		//
+		//}
 
 		return true
 	})

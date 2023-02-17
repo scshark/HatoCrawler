@@ -116,6 +116,10 @@ func CreateTwitterListData(userId int64, tw []TwitterItems) error {
 
 	var err error
 
+	if len(tw) == 0 {
+		err = errors.New("推特信息数据列表为空")
+		return err
+	}
 	mData := make([]model.Twitter, 0)
 
 	for _, items := range tw {
