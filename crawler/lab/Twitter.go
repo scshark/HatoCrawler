@@ -474,13 +474,7 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 			if err != nil {
 				logrus.Errorf("json parse retweeted_status tweetUserEntitiesParse error %s",err )
 			} else {
-				isAppendRpU := true
-				for _, i := range rpUserId {
-
-					if i == rpUser.IdStr {
-						isAppendRpU = false
-					}
-				}
+				isAppendRpU := false
 				hasChinese := false
 				for _,n := range rpUser.Name{
 					if unicode.Is(unicode.Han,n) {
@@ -499,7 +493,16 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 					isAppendRpU = true
 				}else if rpUser.FollowersCount > 5750000 {
 					isAppendRpU = true
+				}else {
+					isAppendRpU = false
 				}
+
+				for _, i := range rpUserId {
+					if i == rpUser.IdStr {
+						isAppendRpU = false
+					}
+				}
+
 				if isAppendRpU{
 					rpUserId = append(rpUserId, rpUser.IdStr)
 					repUser = append(repUser, rpUser)
