@@ -21,6 +21,7 @@ import (
 	"math/big"
 	"net/http"
 	"time"
+	"unicode"
 )
 
 type Twitter struct{
@@ -445,6 +446,7 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 		// 只保存第一个items的user
 		if user.IdStr == "" {
 			tUser, err := crawler.tweetUserEntitiesParse(value.Get("user"))
+			tUser.LoadType = 3
 			if err != nil {
 				logrus.Errorf("推特用户主体信息解析错误 %s",err )
 			} else {
@@ -481,6 +483,19 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 				}
 				// 只添加粉丝15W以上的账户
 				if isAppendRpU && rpUser.FollowersCount > 155555{
+					hasChinese := false
+					for _,n := range rpUser.Name{
+						if unicode.Is(unicode.Han,n) {
+							hasChinese = true
+							break
+						}
+					}
+
+					if hasChinese {
+						rpUser.LoadType = 3
+					}else {
+						rpUser.LoadType = 0
+					}
 					rpUserId = append(rpUserId, rpUser.IdStr)
 					repUser = append(repUser, rpUser)
 				}

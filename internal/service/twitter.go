@@ -39,6 +39,7 @@ type TwitterUser struct {
 	CreatedAt        int64    `json:"created_at"`
 	FollowersCount        int64    `json:"followers_count"`
 	FriendsCount        int64    `json:"friends_count"`
+	LoadType        int64    `json:"load_type"`
 }
 
 type TwitterItems struct {
@@ -80,6 +81,7 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 		twUser.FriendsCount = u.FriendsCount
 		twUser.FollowersCount = u.FollowersCount
 		twUser.NeedHatoUpdate = 1
+		twUser.LoadType = u.LoadType
 
 		err = ds.UpdateTweetUser(twUser)
 
@@ -95,7 +97,7 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 			ProfileBannerUrl: u.ProfileBannerUrl,
 			ProfileImageUrl:  u.ProfileImageUrl,
 			TweetCreatedAt:   u.CreatedAt,
-			LoadType:         LoadAll,
+			LoadType:         u.LoadType,
 			TwitterLoadTime:  time.Now().Unix(),
 			FriendsCount: u.FriendsCount,
 			FollowersCount: u.FollowersCount,
@@ -128,9 +130,9 @@ func CreateTwitterListData(userId int64, tw []TwitterItems) error {
 			userId = user.ID
 		}
 
-		if items.UserMentions != "" {
-			logrus.Warnf("user ------ UserMentions %s", items.UserMentions)
-		}
+		//if items.UserMentions != "" {
+		//	logrus.Warnf("user ------ UserMentions %s", items.UserMentions)
+		//}
 		mData = append(mData, model.Twitter{
 			Model:            &model.Model{ID: items.Id.Int64()},
 			IdStr:            items.IdStr,
