@@ -127,6 +127,9 @@ func CreateTwitterListData(userId int64, tw []TwitterItems) error {
 
 		if userId == 0 {
 			user := ds.GetTweetUserByTweetId(items.UserId.String())
+			if user.Model == nil {
+				continue
+			}
 			userId = user.ID
 		}
 
