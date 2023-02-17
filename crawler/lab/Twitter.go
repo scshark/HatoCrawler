@@ -183,12 +183,12 @@ func (crawler Twitter) loadNewerTwitter() error {
 		return err
 	}
 	// save reply twitter
-	logrus.Infof("推特用户%s，采集类型：新消息（回复）， 此次共采集到 %d 回复消息 ，开始保存数据",tweetUser.Name,len(tw.ReplyItems))
-	err = service.CreateTwitterListData(0, tw.ReplyItems)
-	if err != nil {
-		logrus.Errorf("推特回复信息保存失败 err :%s",err)
-		return err
-	}
+	//logrus.Infof("推特用户%s，采集类型：新消息（回复）， 此次共采集到 %d 回复消息 ，开始保存数据",tweetUser.Name,len(tw.ReplyItems))
+	//err = service.CreateTwitterListData(0, tw.ReplyItems)
+	//if err != nil {
+	//	logrus.Errorf("推特回复信息保存失败 err :%s",err)
+	//	return err
+	//}
 	logrus.Infof("推特用户%s，更新用户推特采集新消息时间 LoadTime",tweetUser.Name)
 	// 更新用户获取信息时间
 	err = service.UpdateUserLoadTime(service.LoadNewer,tweetUser)
@@ -286,13 +286,13 @@ func (crawler Twitter) loadOlderTwitter() error {
 		logrus.Errorf("推特信息保存失败 err :%s",err)
 		return err
 	}
-	logrus.Infof("推特此次获取区间信息用户为 ： %s , 共采集到 %d 条区间回复信息",tweetUser.Name,len(tw.ReplyItems))
-	// save reply twitter
-	err = service.CreateTwitterListData(0, tw.ReplyItems)
-	if err != nil {
-		logrus.Errorf("推特回复信息保存失败 err :%s",err)
-		return err
-	}
+	//logrus.Infof("推特此次获取区间信息用户为 ： %s , 共采集到 %d 条区间回复信息",tweetUser.Name,len(tw.ReplyItems))
+	//// save reply twitter
+	//err = service.CreateTwitterListData(0, tw.ReplyItems)
+	//if err != nil {
+	//	logrus.Errorf("推特回复信息保存失败 err :%s",err)
+	//	return err
+	//}
 	logrus.Infof("推特此次获取区间信息用户为 ： %s , 更新用户区间采集时间 load older time",tweetUser.Name)
 	err = service.UpdateUserLoadTime(service.LoadOlder,tweetUser)
 	if err !=nil {
@@ -374,11 +374,11 @@ func (crawler Twitter) initTwitterLives() error {
 			return err
 		}
 		// save reply twitter
-		logrus.Infof("初始化获取用户：%s, 开始保存用户回复推特, 需要保存 %d 条回复推特",t,len(tw.ReplyItems))
-		err = service.CreateTwitterListData(0, tw.ReplyItems)
-		if err != nil {
-			return err
-		}
+		//logrus.Infof("初始化获取用户：%s, 开始保存用户回复推特, 需要保存 %d 条回复推特",t,len(tw.ReplyItems))
+		//err = service.CreateTwitterListData(0, tw.ReplyItems)
+		//if err != nil {
+		//	return err
+		//}
 		// sleep 30s
 		logrus.Infof("推特用户%s 完成初始化信息采集",t)
 
