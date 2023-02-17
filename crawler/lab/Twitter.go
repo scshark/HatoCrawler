@@ -481,21 +481,26 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 						isAppendRpU = false
 					}
 				}
-				// 只添加粉丝15W以上的账户
-				if isAppendRpU && rpUser.FollowersCount > 155555{
-					hasChinese := false
-					for _,n := range rpUser.Name{
-						if unicode.Is(unicode.Han,n) {
-							hasChinese = true
-							break
-						}
+				hasChinese := false
+				for _,n := range rpUser.Name{
+					if unicode.Is(unicode.Han,n) {
+						hasChinese = true
+						break
 					}
+				}
 
-					if hasChinese {
-						rpUser.LoadType = 3
-					}else {
-						rpUser.LoadType = 0
-					}
+				if hasChinese {
+					rpUser.LoadType = 3
+				}else {
+					rpUser.LoadType = 0
+				}
+				// 只添加粉丝15W以上的账户
+				if hasChinese && rpUser.FollowersCount > 155555 {
+					isAppendRpU = true
+				}else if rpUser.FollowersCount > 1000000 {
+					isAppendRpU = true
+				}
+				if isAppendRpU{
 					rpUserId = append(rpUserId, rpUser.IdStr)
 					repUser = append(repUser, rpUser)
 				}
