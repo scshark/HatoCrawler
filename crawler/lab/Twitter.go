@@ -495,9 +495,9 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 					rpUser.LoadType = 0
 				}
 				// 只添加粉丝15W以上的账户
-				if hasChinese && rpUser.FollowersCount > 155555 {
+				if hasChinese && rpUser.FollowersCount > 175555 {
 					isAppendRpU = true
-				}else if rpUser.FollowersCount > 1000000 {
+				}else if rpUser.FollowersCount > 5750000 {
 					isAppendRpU = true
 				}
 				if isAppendRpU{
