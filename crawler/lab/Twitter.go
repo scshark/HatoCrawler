@@ -22,7 +22,6 @@ import (
 	"math/big"
 	"net/http"
 	"time"
-	"unicode"
 )
 
 type Twitter struct{
@@ -486,25 +485,11 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 				logrus.Errorf("json parse retweeted_status tweetUserEntitiesParse error %s",err )
 			} else {
 				isAppendRpU := false
-				hasChinese := false
 				rpUser.LoadType = 0
-				for _,n := range rpUser.Name{
-					if unicode.Is(unicode.Han,n) {
-						hasChinese = true
-						break
-					}
-				}
 
-				if hasChinese {
-					rpUser.LoadType = 3
-				}
 				// 只添加粉丝15W以上的账户
-				if hasChinese && rpUser.FollowersCount > 175555 {
+				if rpUser.FollowersCount > 155555 {
 					isAppendRpU = true
-				}else if rpUser.FollowersCount > 5750000 {
-					isAppendRpU = true
-				}else {
-					isAppendRpU = false
 				}
 
 				for _, i := range rpUserId {
