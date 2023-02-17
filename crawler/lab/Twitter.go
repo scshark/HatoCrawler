@@ -116,8 +116,13 @@ func (crawler Twitter) loadNewerTwitter() error {
 
 	logrus.Infof("此次采集推特新消息的 用户 最近一条推特 id ：%s ",lastTw.IdStr)
 
-	// 获取信息地址
-	getUrl := fmt.Sprintf(twitterGetUrl, "sid="+lastTw.IdStr, tweetUser.ScreenName)
+	getUrl := ""
+	if lastTw.IdStr == ""{
+		getUrl = fmt.Sprintf(twitterGetUrl, "sid=0", tweetUser.ScreenName)
+	}else{
+		// 获取信息地址
+		getUrl = fmt.Sprintf(twitterGetUrl, "sid="+lastTw.IdStr, tweetUser.ScreenName)
+	}
 
 	logrus.Infof("此次采集推特新消息的 用户 ：%s ,获取链接 %s ",tweetUser.Name,getUrl)
 
