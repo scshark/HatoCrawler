@@ -7,6 +7,7 @@
 package lab
 
 import (
+	"HatoCrawler/internal/conf"
 	"HatoCrawler/internal/service"
 	"HatoCrawler/register"
 	"HatoCrawler/utils"
@@ -43,6 +44,10 @@ func (crawler Twitter) Config() register.CrawlerConfig {
 func (crawler Twitter) Get() error {
 
 	var err error
+
+	for _, t := range crawler.ScreenName {
+		conf.Redis.SAdd(conf.Ctx,"twitter_init_screenName",t)
+	}
 	err = crawler.initTwitterLives()
 	if err != nil {
 		logrus.Errorf("推特采集初始化错误 initTwitterLives err : %s", err)
@@ -308,8 +313,9 @@ func (crawler Twitter) initTwitterLives() error {
 	var err error
 	// 需要初始化推特用户的列表
 
-	logrus.Infof(" %s 初始化开始，初始化用户列表 %v",crawler.Config().Description,crawler.ScreenName)
-	for _, t := range crawler.ScreenName {
+	initTweetUserList := conf.Redis.SMembers(conf.Ctx,"twitter_init_screenName").Val()
+	logrus.Infof(" %s 初始化开始，初始化用户列表 %v",crawler.Config().Description,initTweetUserList)
+	for _, t := range initTweetUserList {
 
 		getUrl := fmt.Sprintf(twitterGetUrl, "sid=0", t)
 
