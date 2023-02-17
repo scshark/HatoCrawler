@@ -44,6 +44,7 @@ func (crawler Twitter) Get() error {
 
 	var err error
 
+	logrus.Infof("推特采集初始化 列表ScreenName %v ",crawler.ScreenName)
 	for _, t := range crawler.ScreenName {
 		conf.Redis.SAdd(conf.Ctx,"twitter_init_screenName",t)
 	}
