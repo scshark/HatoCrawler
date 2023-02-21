@@ -99,7 +99,7 @@ func (crawler Jinse) respParse(resp string) (service.JinseLiveList, error) {
 			ContentPrefix: data["content_prefix"].Str,
 			LinkName:      data["link_name"].Str,
 			Link:          data["link"].Str,
-			LiveCreatedAt: value.Get("live_created_at").Int(),
+			LiveCreatedAt: value.Get("created_at").Int(),
 			CreatedAtZh:   data["created_at_zh"].Str,
 		})
 		return true

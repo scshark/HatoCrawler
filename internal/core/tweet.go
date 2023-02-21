@@ -22,5 +22,6 @@ type TweetUserService interface {
 	CreateTweetUser(tu *model.TwitterUser) (*model.TwitterUser, error)
 	UpdateTweetUser(tu *model.TwitterUser) error
 	GetTweetUserByTweetId(id string) *model.TwitterUser
+	GetTweetUserByScreenName(screenName string) *model.TwitterUser
 	GetTweetUserForLoad(twUser *model.TwitterUser) *model.TwitterUser
 }

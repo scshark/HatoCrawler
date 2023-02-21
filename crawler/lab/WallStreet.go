@@ -117,11 +117,11 @@ func (crawler WallStreet) getLiveData(getType int) error {
 func wsCronCrawler() {
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runLatest)
-	err = _cron.AddFunc("@every 11m", runIntervals)
+	err = _cron.AddFunc("@every 9m", runIntervals)
 	if err != nil {
 		logrus.Fatalf("华尔街见闻定时器启动失败 %s", err)
 	}
-	logrus.Infof("华尔街见闻定时采集启动成功 every 1m runLatest every 11m runIntervals")
+	logrus.Infof("华尔街见闻定时采集启动成功 every 1m runLatest every 9m runIntervals")
 
 	_cron.Start()
 }

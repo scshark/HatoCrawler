@@ -91,6 +91,20 @@ func (t *tweetUserServant)UpdateTweetUser(tu *model.TwitterUser) error {
 	return tu.Update(t.db)
 }
 
+func (t *tweetUserServant)GetTweetUserByScreenName(screenName string) *model.TwitterUser  {
+
+	var tUser = &model.TwitterUser{
+		ScreenName:screenName,
+	}
+	user,err := tUser.First(t.db)
+
+	if err != nil  {
+		logrus.Errorf(" tweet user first err %s",err)
+		return nil
+	}
+
+	return user
+}
 func (t *tweetUserServant)GetTweetUserByTweetId(id string) *model.TwitterUser  {
 
 	var tUser = &model.TwitterUser{

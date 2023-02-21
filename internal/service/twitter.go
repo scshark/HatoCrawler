@@ -63,13 +63,17 @@ type TwitterParse struct {
 	ReplyUser  []TwitterUser
 }
 
+func GetTweetUserByName(name string) *model.TwitterUser {
+	return ds.GetTweetUserByScreenName(name)
+}
 func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) {
 	// save user,
 	twUser = ds.GetTweetUserByTweetId(u.IdStr)
 
 	if twUser.Model != nil && twUser.Model.ID > 0 {
 
-		logrus.Infof("name: %s 更新推特用户信息",u.Name)
+		tmpUser := twUser
+
 		twUser.Name = u.Name
 		twUser.Description = u.Description
 		twUser.Location = u.Location
@@ -83,7 +87,13 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 		twUser.NeedHatoUpdate = 1
 		//twUser.LoadType = u.LoadType
 
-		err = ds.UpdateTweetUser(twUser)
+		if tmpUser != twUser {
+			logrus.Infof("name: %s 更新推特用户信息",u.Name)
+			err = ds.UpdateTweetUser(twUser)
+		}else {
+			logrus.Infof("name: %s 用户数据已经最新，无需更新",u.Name)
+		}
+
 
 	} else {
 		logrus.Infof("name: %s 新增推特用户信息",u.Name)
@@ -97,8 +107,8 @@ func SaveTwitterUserItems(u TwitterUser) (twUser *model.TwitterUser, err error) 
 			ProfileBannerUrl: u.ProfileBannerUrl,
 			ProfileImageUrl:  u.ProfileImageUrl,
 			TweetCreatedAt:   u.CreatedAt,
-			LoadType:         u.LoadType,
-			TwitterLoadTime:  time.Now().Unix(),
+			LoadType:         3,
+			//TwitterLoadTime:  time.Now().Unix(),
 			FriendsCount: u.FriendsCount,
 			FollowersCount: u.FollowersCount,
 			NeedHatoUpdate: 1,
@@ -195,12 +205,10 @@ func GetTweetUserForLoad(loadType uint) *model.TwitterUser {
 		// 只获取100W粉丝以上的
 		tUser = &model.TwitterUser{
 			LoadType:        OnlyLoadNewer,
-			FollowersCount: 20000,
 		}
 	case LoadOlder:
 		tUser = &model.TwitterUser{
 			LoadType:      OnlyLoadOlder,
-			FollowersCount: 20000,
 		}
 	default:
 		return nil

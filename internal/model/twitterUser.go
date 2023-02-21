@@ -42,6 +42,8 @@ func (t *TwitterUser) First(db *gorm.DB) (*TwitterUser, error) {
 		db = db.Where("id= ? AND is_del = ?", t.Model.ID, 0)
 	} else if t.TweetUserId != "" {
 		db = db.Where("tweet_user_id= ? AND is_del = ?", t.TweetUserId, 0)
+	} else if t.ScreenName != "" {
+		db = db.Where("screen_name = ? AND is_del = ?", t.ScreenName, 0)
 	} else if t.LoadType > 0 {
 
 		db = db.Where("load_type = ?", 3).Or("load_type = ?", t.LoadType)

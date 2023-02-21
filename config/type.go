@@ -160,6 +160,7 @@ type LabStruct struct {
 	X1cT34m     X1cT34mStruct     `yaml:"X1cT34m"`
 	Jinse       JinseStruct       `yaml:"Jinse"`
 	WallStreet  WallStreetStruct  `yaml:"WallStreet"`
+	Dyhjw  DyhjwStruct  `yaml:"Dyhjw"`
 	Xgb         XgbStruct         `yaml:"Xgb"`
 	Twitter     TwitterStruct     `yaml:"Twitter"`
 }
@@ -195,6 +196,9 @@ type JinseStruct struct {
 	Enabled bool `yaml:"enabled"`
 }
 type WallStreetStruct struct {
+	Enabled bool `yaml:"enabled"`
+}
+type DyhjwStruct struct {
 	Enabled bool `yaml:"enabled"`
 }
 type XgbStruct struct {

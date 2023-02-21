@@ -78,6 +78,7 @@ func DefaultConfig() Config {
 				X1cT34m:     X1cT34mStruct{Enabled: false},
 				Jinse:       JinseStruct{Enabled: true},
 				WallStreet:  WallStreetStruct{Enabled: true},
+				Dyhjw:  DyhjwStruct{Enabled: true},
 				Twitter:     TwitterStruct{Enabled: true, ScreenName: []string{}},
 			},
 		},

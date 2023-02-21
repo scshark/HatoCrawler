@@ -65,7 +65,7 @@ func (crawler Dyhjw) dhCronCrawler() error {
 
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runDhLatest)
-	err = _cron.AddFunc("@every 12m", runDhIntervals)
+	err = _cron.AddFunc("@every 8m", runDhIntervals)
 	_cron.Start()
 	return err
 }
@@ -126,7 +126,7 @@ func (crawler Dyhjw) getLiveData(getType int) error {
 			logrus.Fatalf("第一黄金网初始化游标失败 %s", err)
 		}
 	case wsGetIntervals:
-		logrus.Infof("%s 更新游标 ： %d",crawler.Config().Description,livesItem[len(livesItem)-1].Id)
+		logrus.Infof("%s 更新游标 ： %v",crawler.Config().Description,livesItem[len(livesItem)-1].Id)
 
 		cursor, _ := strconv.ParseInt(livesItem[len(livesItem)-1].Id, 10, 64)
 		err = service.UpdateLivesCursor(config.DyhjwLivesCrawler, cursor, 0)
@@ -200,7 +200,7 @@ func (crawler Dyhjw) respParse(resp string) ([]service.DyhjwLivesItems, error) {
 				}
 
 				d.DisplayTime = displayTime.Unix()
-				d.Id = v
+				d.Id = v[:18]
 			case 2:
 				d.Content = v
 			}

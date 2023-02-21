@@ -56,10 +56,10 @@ func (crawler Lab) Get() error {
 	if Cfg.Crawler.Lab.WallStreet.Enabled {
 		resultSlice = tmpCrawler(resultSlice, WallStreet{})
 	}
-	if Cfg.Crawler.Lab.WallStreet.Enabled {
+	if Cfg.Crawler.Lab.Dyhjw.Enabled {
 		resultSlice = tmpCrawler(resultSlice,Dyhjw{})
 	}
-	if Cfg.Crawler.Lab.WallStreet.Enabled {
+	if Cfg.Crawler.Lab.Xgb.Enabled {
 		resultSlice = tmpCrawler(resultSlice,Xgb{})
 	}
 	if Cfg.Crawler.Lab.Twitter.Enabled {
