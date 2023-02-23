@@ -42,7 +42,7 @@ func CreateWallStreetLivesData(lives []WallStreetLivesItems,next int64)error{
 			continue
 		}
 		mData = append(mData,model.WallStreet{
-			ID:items.Id,
+			Model:         &model.Model{ID: items.Id},
 			Title:items.Title,
 			ContentText:items.ContentText,
 			ContentMore:items.ContentMore,
