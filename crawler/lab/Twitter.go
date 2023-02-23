@@ -561,6 +561,11 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 			return true
 		}
 
+		// 跳过转推数据 in_reply_to_status_id_str
+		if value.Get("retweeted_status").Exists() || value.Get("in_reply_to_status_id_str").String() != "" {
+			return true
+		}
+
 		// 抽出user处理
 		// 只保存第一个items的user
 		if user.IdStr == "" {
@@ -581,6 +586,7 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 		}
 
 		tw = append(tw, tweet)
+
 
 		// 抽取 retweet user
 		//if value.Get("retweeted_status").Exists() {

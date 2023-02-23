@@ -14,7 +14,6 @@ type Tabler interface {
 
 type WallStreet struct {
 	*Model
-	ID int64 `gorm:"primary_key" json:"id"`
 	Title       string `json:"title"`
 	Uri         string `json:"uri"`
 	DisplayTime int64  `json:"display_time"`
