@@ -561,8 +561,12 @@ func (crawler Twitter) respParse(resp string) (service.TwitterParse, error) {
 			return true
 		}
 
+
 		// 跳过转推数据 in_reply_to_status_id_str
+		logrus.Infof("推文 转推 ： %v , 回复 %v",value.Get("retweeted_status").Exists(),value.Get("in_reply_to_status_id_str").String() != "")
+
 		if value.Get("retweeted_status").Exists() || value.Get("in_reply_to_status_id_str").String() != "" {
+			logrus.Infof("内容 ：%s ， 跳过本条推文,转推 ： %v , 回复 %v",value.Get("full_text").String(),value.Get("retweeted_status").Exists(),value.Get("in_reply_to_status_id_str").String() != "")
 			return true
 		}
 

@@ -50,18 +50,18 @@ func (crawler Lab) Get() error {
 	// }
 
 
-	if Cfg.Crawler.Lab.Jinse.Enabled {
-		resultSlice = tmpCrawler(resultSlice, Jinse{})
-	}
-	if Cfg.Crawler.Lab.WallStreet.Enabled {
-		resultSlice = tmpCrawler(resultSlice, WallStreet{})
-	}
-	if Cfg.Crawler.Lab.Dyhjw.Enabled {
-		resultSlice = tmpCrawler(resultSlice,Dyhjw{})
-	}
-	if Cfg.Crawler.Lab.Xgb.Enabled {
-		resultSlice = tmpCrawler(resultSlice,Xgb{})
-	}
+	//if Cfg.Crawler.Lab.Jinse.Enabled {
+	//	resultSlice = tmpCrawler(resultSlice, Jinse{})
+	//}
+	//if Cfg.Crawler.Lab.WallStreet.Enabled {
+	//	resultSlice = tmpCrawler(resultSlice, WallStreet{})
+	//}
+	//if Cfg.Crawler.Lab.Dyhjw.Enabled {
+	//	resultSlice = tmpCrawler(resultSlice,Dyhjw{})
+	//}
+	//if Cfg.Crawler.Lab.Xgb.Enabled {
+	//	resultSlice = tmpCrawler(resultSlice,Xgb{})
+	//}
 	if Cfg.Crawler.Lab.Twitter.Enabled {
 		resultSlice = tmpCrawler(resultSlice,Twitter{ ScreenName:Cfg.Crawler.Lab.Twitter.ScreenName})
 	}
