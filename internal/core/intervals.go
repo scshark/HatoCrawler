@@ -19,4 +19,6 @@ type IntervalsService interface {
 	//  修改区间
 	UpdateIntervals(i *model.Intervals) error
 
+	GetPrevIntervals(t int64,ex int64) (*model.Intervals, error)
+
 }

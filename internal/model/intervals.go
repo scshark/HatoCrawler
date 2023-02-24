@@ -25,14 +25,19 @@ func (i *Intervals) Create(db *gorm.DB) (*Intervals, error) {
 	return i, err
 }
 
-func (i *Intervals) First(db *gorm.DB) (*Intervals, error) {
+func (i *Intervals) First(db *gorm.DB,c *ConditionsT) (*Intervals, error) {
 	var iv Intervals
 	if i.Model != nil && i.Model.ID > 0 {
 		db = db.Where("id= ? AND is_del = ?", i.Model.ID, 0)
-	} else if i.IsCurrent > 0 || i.Type > 0 {
-		db = db.Where("type= ? AND is_current= ? AND is_completed= ?", i.Type, i.IsCurrent, i.IsCompleted).Order("`over` desc")
 	}
 
+	for k, v := range *c {
+		if k == "ORDER" {
+			db = db.Order(v)
+		} else {
+			db = db.Where(k, v)
+		}
+	}
 
 	err := db.Limit(1).Find(&iv).Error
 	return &iv, err

@@ -14,7 +14,7 @@ import (
 func InitLivesIntervals(nextCur int64, LivesType int64, typeExtend int64) error {
 
 
-	// 获取一个当前区间
+	// 获取上一个区间
 	cur, err := ds.GetCurrentIntervals(LivesType,typeExtend)
 	if err != nil {
 		logrus.Errorf("获取当前区间失败 error %s",err)
