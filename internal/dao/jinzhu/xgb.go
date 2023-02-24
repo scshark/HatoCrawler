@@ -40,7 +40,7 @@ func (x *xgbServant)XgbLivesIsExist(liveId int64) bool  {
 			ID:liveId,
 		},
 	}
-	lives,err := xgb.First(x.db)
+	lives,err := xgb.First(x.db,&model.ConditionsT{ "ORDER":"live_id DESC"})
 
 	if err != nil  {
 		fmt.Printf("lives first err %s",err)
