@@ -67,7 +67,7 @@ func (i *intervalsServant) GetIntervalsOverCursor(t int64, ex int64) (overCursor
 	case config.JinseLivesCrawler:
 		c := &model.ConditionsT{
 			"created_on < ?": time.Now().Unix() - 35,
-			"Order": "top_id DESC ,live_id DESC",
+			"ORDER": "top_id DESC ,live_id DESC",
 		}
 		live,err := (&model.Jinse{}).First(i.db,c)
 		if err != nil {
@@ -78,7 +78,7 @@ func (i *intervalsServant) GetIntervalsOverCursor(t int64, ex int64) (overCursor
 	case config.WallStreetLivesCrawler:
 		c := &model.ConditionsT{
 			"created_on < ?": time.Now().Unix() - 35,
-			"Order": "display_time DESC",
+			"ORDER": "display_time DESC",
 		}
 		live,err := (&model.WallStreet{}).First(i.db,c)
 		if err != nil {
@@ -88,7 +88,7 @@ func (i *intervalsServant) GetIntervalsOverCursor(t int64, ex int64) (overCursor
 	case config.DyhjwLivesCrawler:
 		c := &model.ConditionsT{
 			"created_on < ?": time.Now().Unix() - 35,
-			"Order": "display_time DESC",
+			"ORDER": "display_time DESC",
 		}
 		live,err := (&model.Dyhjw{}).First(i.db,c)
 		if err != nil {
@@ -100,7 +100,7 @@ func (i *intervalsServant) GetIntervalsOverCursor(t int64, ex int64) (overCursor
 
 		c := &model.ConditionsT{
 			"created_on < ?": time.Now().Unix() - 35,
-			"Order": "live_created_at DESC",
+			"ORDER": "live_created_at DESC",
 		}
 		live,err := (&model.Xgb{}).First(i.db,c)
 		if err != nil {
