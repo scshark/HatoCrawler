@@ -159,6 +159,7 @@ func (crawler Jinse) getLiveData(getType uint) error {
 	case wsGetInit:
 		logrus.Infof("%s 开始初始化游标 %d",crawler.Config().Description,list.BottomId)
 
+		// 获取
 		err = service.InitLivesIntervals(list.BottomId, config.JinseLivesCrawler, 0)
 		if err != nil {
 			logrus.Fatalf("金色财经初始化游标失败 %s", err)

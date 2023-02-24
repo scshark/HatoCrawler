@@ -37,7 +37,7 @@ func (d *dyhjwServant)DyhjwLivesExist(liveId string) bool  {
 	var dh = &model.Dyhjw{
 		LiveId:liveId,
 	}
-	lives,err := dh.First(d.db)
+	lives,err := dh.First(d.db,&model.ConditionsT{ "ORDER":"live_id DESC"})
 
 	if err != nil  {
 		return false

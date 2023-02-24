@@ -14,41 +14,40 @@ import (
 func InitLivesIntervals(nextCur int64, LivesType int64, typeExtend int64) error {
 
 
-	// 获取上一个区间
-	cur, err := ds.GetCurrentIntervals(LivesType,typeExtend)
-	if err != nil {
-		logrus.Errorf("获取当前区间失败 error %s",err)
-		return err
+	overCursor,e := ds.GetIntervalsOverCursor(LivesType,typeExtend)
+
+	if e !=nil {
+		logrus.Errorf("初始化获取区间节点末位标记失败 GetIntervalsOverCursor error %s",e)
+		return e
 	}
-	if cur.Model == nil {
-		iv := &model.Intervals{
-			Begin:     nextCur,
-			Over:      0,
-			Type:      LivesType,
-			IsCurrent: 1,
-			TypeExtend: typeExtend,
-		}
-		_, err = ds.CreateIntervals(iv)
-		return err
+	if overCursor == 0 {
+		logrus.Infof("区间节点 末位 为 0 ，LivesType %v ",LivesType)
 	}
+
 	// 无需初始化 x>= y
-	if cur.Begin >= nextCur {
+	if overCursor >= nextCur {
 		return nil
 	}
-	err = ds.CancelIntervalsCurrent(LivesType,typeExtend)
+	err := ds.CancelIntervalsCurrent(LivesType,typeExtend)
 	if err != nil {
 		logrus.Errorf("取消所有区间状态失败 error %s",err)
 		return err
 	}
 
+
 	iv := &model.Intervals{
 		Begin:     nextCur,
-		Over:      cur.Begin,
+		Over:      overCursor,
 		Type:      LivesType,
 		IsCurrent: 1,
 		TypeExtend: typeExtend,
 	}
 	_, err = ds.CreateIntervals(iv)
+	if err != nil {
+		logrus.Errorf("创建初始化区间失败 error %s",err)
+		return err
+	}
+
 	return err
 }
 

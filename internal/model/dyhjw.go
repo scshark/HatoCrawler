@@ -24,7 +24,7 @@ func (d *Dyhjw) Create (db *gorm.DB,items []Dyhjw) (*Dyhjw,error){
 	return  d,err
 }
 
-func (d *Dyhjw) First(db *gorm.DB) (*Dyhjw, error) {
+func (d *Dyhjw) First(db *gorm.DB,c *ConditionsT) (*Dyhjw, error) {
 	var dh Dyhjw
 	if d.Model != nil && d.Model.ID > 0 {
 		db = db.Where("id= ? AND is_del = ?", d.Model.ID, 0)
@@ -32,6 +32,14 @@ func (d *Dyhjw) First(db *gorm.DB) (*Dyhjw, error) {
 		db = db.Where("live_id= ? AND is_del = ?", d.LiveId, 0)
 	}else if d.DisplayTime > 0 {
 		db = db.Where("display_time= ? AND is_del = ?", d.DisplayTime, 0)
+	}
+
+	for k, v := range *c {
+		if k == "ORDER" {
+			db = db.Order(v)
+		} else {
+			db = db.Where(k, v)
+		}
 	}
 	err := db.Limit(1).Find(&dh).Error
 	return &dh, err

@@ -37,3 +37,20 @@ func (w *WallStreet) FirstById (db *gorm.DB,id int64)(*WallStreet,error){
 	err := db.First(&w, id).Error
 	return w,err
 }
+
+
+func (w *WallStreet) First(db *gorm.DB,c *ConditionsT) (*WallStreet, error) {
+	var ws WallStreet
+	if ws.Model != nil && ws.Model.ID > 0 {
+		db = db.Where("id= ? AND is_del = ?", ws.Model.ID, 0)
+	}
+	for k, v := range *c {
+		if k == "ORDER" {
+			db = db.Order(v)
+		} else {
+			db = db.Where(k, v)
+		}
+	}
+	err := db.Limit(1).Find(&ws).Error
+	return &ws, err
+}

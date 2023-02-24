@@ -25,11 +25,21 @@ func (x *Xgb) Create (db *gorm.DB,items []Xgb) (*Xgb,error){
 	return  x,err
 }
 
-func (x *Xgb) First(db *gorm.DB) (*Xgb, error) {
+func (x *Xgb) First(db *gorm.DB,c *ConditionsT) (*Xgb, error) {
 	var dh Xgb
 	if x.Model != nil && x.Model.ID > 0 {
 		db = db.Where("id= ? AND is_del = ?", x.Model.ID, 0)
 	}
+
+	for k, v := range *c {
+		if k == "ORDER" {
+			db = db.Order(v)
+		} else {
+			db = db.Where(k, v)
+		}
+
+	}
+
 	err := db.Limit(1).Find(&dh).Error
 	return &dh, err
 }

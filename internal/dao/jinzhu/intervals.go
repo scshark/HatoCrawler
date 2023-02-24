@@ -7,9 +7,12 @@
 package jinzhu
 
 import (
+	"HatoCrawler/config"
 	"HatoCrawler/internal/core"
 	"HatoCrawler/internal/model"
 	"gorm.io/gorm"
+	"strconv"
+	"time"
 )
 
 var (
@@ -57,32 +60,59 @@ func (i *intervalsServant) GetCurrentIntervals(t int64, ex int64) (*model.Interv
 	}
 
 }
-func (i *intervalsServant) GetPrevIntervals(t int64, ex int64) (*model.Intervals, error) {
+func (i *intervalsServant) GetIntervalsOverCursor(t int64, ex int64) (overCursor int64,err error) {
 
-	c := &model.ConditionsT{
-		"type = ?": t,
-		"type_extend = ?": ex,
-		"ORDER":"created_on DESC",
-	}
-	interval, err := (&model.Intervals{}).First(i.db,c)
-	if err != nil {
-		return nil, err
-	}
-	// update current
-
-	if interval.Begin > 0 && interval.Begin < interval.Over {
-		interval.IsCurrent = 0
-		interval.IsCompleted = 1
-		err := interval.Update(i.db)
-		if err != nil {
-			return nil, err
+	switch t {
+	// 获取最大id作为本次区间over cursor
+	case config.JinseLivesCrawler:
+		c := &model.ConditionsT{
+			"created_on < ?": time.Now().Unix() - 35,
+			"Order": "top_id DESC ,live_id DESC",
 		}
-		// pick 一个新的interval
-		return i.PickNewIntervals(t,ex)
-	} else {
-		return interval, err
+		live,err := (&model.Jinse{}).First(i.db,c)
+		if err != nil {
+			return 0,err
+		}
+		overCursor = live.TopId
+
+	case config.WallStreetLivesCrawler:
+		c := &model.ConditionsT{
+			"created_on < ?": time.Now().Unix() - 35,
+			"Order": "display_time DESC",
+		}
+		live,err := (&model.WallStreet{}).First(i.db,c)
+		if err != nil {
+			return 0,err
+		}
+		overCursor = live.DisplayTime
+	case config.DyhjwLivesCrawler:
+		c := &model.ConditionsT{
+			"created_on < ?": time.Now().Unix() - 35,
+			"Order": "display_time DESC",
+		}
+		live,err := (&model.Dyhjw{}).First(i.db,c)
+		if err != nil {
+			return 0,err
+		}
+		overCursor,_ = strconv.ParseInt(live.LiveId,10,64)
+
+	case config.XgbLivesCrawler:
+
+		c := &model.ConditionsT{
+			"created_on < ?": time.Now().Unix() - 35,
+			"Order": "live_created_at DESC",
+		}
+		live,err := (&model.Xgb{}).First(i.db,c)
+		if err != nil {
+			return 0,err
+		}
+		overCursorStr := strconv.FormatInt(live.LiveCreatedAt,10) + "133"
+
+		overCursor,_ = strconv.ParseInt(overCursorStr,10,64)
 	}
 
+
+	return overCursor,nil
 }
 func (i *intervalsServant) CancelIntervalsCurrent(t int64, ex int64) error {
 	var iv = &model.Intervals{
