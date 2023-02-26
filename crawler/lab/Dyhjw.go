@@ -182,6 +182,8 @@ func (crawler Dyhjw) respParse(resp string) ([]service.DyhjwLivesItems, error) {
 		return nil, err
 	}
 	var respLives = make([]service.DyhjwLivesItems, 0)
+	var liveIds = make([]string,0)
+	var tmpNum int = 1
 	for _, items := range result {
 		if len(items) < 3 {
 			continue
@@ -205,6 +207,14 @@ func (crawler Dyhjw) respParse(resp string) ([]service.DyhjwLivesItems, error) {
 				d.Content = v
 			}
 		}
+		for _,i:= range liveIds {
+			// 处理重复id
+			if i == d.Id {
+				d.Id = d.Id + strconv.Itoa(tmpNum)
+				tmpNum++
+			}
+		}
+		liveIds = append(liveIds,d.Id)
 		respLives = append(respLives, d)
 	}
 
