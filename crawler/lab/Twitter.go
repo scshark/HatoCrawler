@@ -512,7 +512,9 @@ func (crawler Twitter) GetData(url string) (string, error) {
 	//req.Header.Set("Cookie", "_ga=GA1.2.790438157.1675074110; PHPSESSID=24ndcpdsu6f39fvirnhvqoss6k; _gid=GA1.2.1251911681.1676887393; _gat=1")
 
 	if strings.Index(url,"get-user") > 0 || strings.Index(url,"get-followers") > 0 {
-		req.Header.Set("Cookie", "_ga=GA1.2.790438157.1675074110; PHPSESSID=24ndcpdsu6f39fvirnhvqoss6k; _gid=GA1.2.1251911681.1676887393; _gat=1")
+		cookie := conf.Redis.Get(conf.Ctx,"ht_crawler_twitter_cookie").Val()
+
+		req.Header.Set("Cookie", cookie)
 	}
 	resp, err := client.Do(req)
 

@@ -65,7 +65,7 @@ func (crawler Dyhjw) dhCronCrawler() error {
 
 	_cron := cron.New()
 	err := _cron.AddFunc("@every 1m", runDhLatest)
-	err = _cron.AddFunc("@every 8m", runDhIntervals)
+	//err = _cron.AddFunc("@every 8m", runDhIntervals)
 	_cron.Start()
 	return err
 }
